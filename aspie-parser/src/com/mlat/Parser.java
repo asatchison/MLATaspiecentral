@@ -35,38 +35,49 @@ public class Parser {
         List<String> stopwords = getStopwordsFromFile();
         BufferedWriter writer = null;
         try {
-            int index = 0;
-            writer = new BufferedWriter(new FileWriter("output/thread" + index + ".txt"));
+            int size = 0;
             JSONObject obj = (JSONObject) parser.parse(new FileReader("data/sample.txt"));
             JSONObject response = (JSONObject) obj.get("response");
             JSONArray docs = (JSONArray) response.get("docs");
-            JSONObject doc = (JSONObject) docs.get(0);
-            String title = doc.get("title").toString().replace("[", "").replace("]","").replace("\"", "");
-            String url =  (doc.get("url").toString()).replace("\\/", "/").replace("[", "").replace("]","").replace("\"", "");
+            while (docs.size() > size && docs.get(size) != null) {
+                JSONObject doc = (JSONObject) docs.get(size);
+                String title = doc.get("title").toString().replace("[", "").replace("]","").replace("\"", "");
+                String url =  (doc.get("url").toString()).replace("\\/", "/").replace("[", "").replace("]","").replace("\"", "");
+                if (!url.endsWith("index.rss")) {
+                    writer = new BufferedWriter(new FileWriter("output/thread" + size + ".txt"));
+                    // Replacing Html tags for every thread
+                    String content = doc.get("content").toString().replace(HTMLSTRING, "");
 
-            // Replacing Html tags for every thread
-            String content = doc.get("content").toString().replace(HTMLSTRING, "");
+                    System.out.println("Title: " + title);
+                    System.out.println("URL: " + url);
 
-            System.out.println("Title: " + title);
-            System.out.println("URL: " + url);
+                    // Replacing all non-alpha characters with empty strings
+                    String filteredContent = content.replaceAll("[^A-Za-z ]", "");
+                    // Separating each string by space and store them into array
+                    String textStr[] = filteredContent.split("\\s+");
 
-            // Replacing all non-alpha characters with empty strings
-            String filteredContent = content.replaceAll("[^A-Za-z ]", "");
-            // Separating each string by space and store them into array
-            String textStr[] = filteredContent.split("\\s+");
-            writer.write("Title: " + title + "\n");
-            writer.write("URL: " + url + "\n");
+                    writer.write("Title: " + title + "\n");
+                    writer.write("URL: " + url + "\n");
 
-            for (int i=0; i<textStr.length; ++i) {
-                // Don't include string that has length 1
-                // Don't include string that are stop words
-                if (textStr[i].length() > 1 && !stopwords.contains(textStr[i].toLowerCase())) {
-                    writer.write(textStr[i] + "\n");
+                    for (int i=0; i<textStr.length; ++i) {
+                        // Don't include string that has length 1
+                        // Don't include string that are stop words
+                        if (textStr[i].length() > 1 && !stopwords.contains(textStr[i].toLowerCase())) {
+                            writer.write(textStr[i] + "\n");
+                        }
+                    }
+
+                    System.out.println("Successfully wrote to file >" + "thread" + size + ".txt");
+                    System.out.println("----------------------------------------");
+                    writer.close();
+                } else {
+                    // avoid duplicate threads
+                    System.out.println("Skipping " + title + "....");
+                    System.out.println("----------------------------------------");
+
                 }
+                size++;
             }
-
-            System.out.println("Successfully wrote to a file:" + "thread" + index + ".txt");
-            writer.close();
         } catch (ParseException pe) {
             System.out.println("position: " + pe.getPosition());
             System.out.println(pe);
