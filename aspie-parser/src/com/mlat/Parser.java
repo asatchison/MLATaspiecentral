@@ -1,11 +1,17 @@
-package com.mlat;
+package src.com.mlat;
 
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,57 +36,43 @@ public class Parser {
         return stopwords;
     }
 
-    public static void main(String[] args) {
-        JSONParser parser = new JSONParser();
+    public static void main(String[] args) throws MalformedURLException, SolrServerException {
+        SolrManager solr = new SolrManager();
+        SolrDocumentList solrDocumentList = solr.getSolrDocumentList();
         List<String> stopwords = getStopwordsFromFile();
         BufferedWriter writer = null;
         try {
-            int size = 0;
-            JSONObject obj = (JSONObject) parser.parse(new FileReader("data/sample.txt"));
-            JSONObject response = (JSONObject) obj.get("response");
-            JSONArray docs = (JSONArray) response.get("docs");
-            while (docs.size() > size && docs.get(size) != null) {
-                JSONObject doc = (JSONObject) docs.get(size);
-                String title = doc.get("title").toString().replace("[", "").replace("]","").replace("\"", "");
-                String url =  (doc.get("url").toString()).replace("\\/", "/").replace("[", "").replace("]","").replace("\"", "");
+            for (int i=0; i < solrDocumentList.size(); ++i) {
+                String url = (solrDocumentList.get(i).getFieldValue("url").toString()).replace("[", "").replace("]","");
                 if (!url.endsWith("index.rss")) {
-                    writer = new BufferedWriter(new FileWriter("output/thread" + size + ".txt"));
-                    // Replacing Html tags for every thread
-                    String content = doc.get("content").toString().replace(HTMLSTRING, "");
-
-                    System.out.println("Title: " + title);
-                    System.out.println("URL: " + url);
-
+                    String title = (solrDocumentList.get(i).getFieldValue("title").toString()).replace("[", "").replace("]","");
+                    String content = (solrDocumentList.get(i).getFieldValue("content").toString()).replace(HTMLSTRING, "");
                     // Replacing all non-alpha characters with empty strings
                     String filteredContent = content.replaceAll("[^A-Za-z ]", "");
                     // Separating each string by space and store them into array
                     String textStr[] = filteredContent.split("\\s+");
-
+                    System.out.println("Title: " + title);
+                    System.out.println("URL: " + url);
+                    writer = new BufferedWriter(new FileWriter("output/thread" + i + ".txt"));
                     writer.write("Title: " + title + "\n");
                     writer.write("URL: " + url + "\n");
 
-                    for (int i=0; i<textStr.length; ++i) {
+                    for (int j = 0; j < textStr.length; ++j) {
                         // Don't include string that has length 1
                         // Don't include string that are stop words
-                        if (textStr[i].length() > 1 && !stopwords.contains(textStr[i].toLowerCase())) {
-                            writer.write(textStr[i] + "\n");
+                        if (textStr[j].length() > 1 && !stopwords.contains(textStr[j].toLowerCase())) {
+                            writer.write(textStr[j] + "\n");
                         }
                     }
-
-                    System.out.println("Successfully wrote to file >" + "thread" + size + ".txt");
+                    System.out.println("Successfully wrote to file >" + "thread" + i + ".txt");
                     System.out.println("----------------------------------------");
                     writer.close();
                 } else {
                     // avoid duplicate threads
-                    System.out.println("Skipping " + title + "....");
+                    System.out.println("Skipping " + url + "....");
                     System.out.println("----------------------------------------");
-
                 }
-                size++;
             }
-        } catch (ParseException pe) {
-            System.out.println("position: " + pe.getPosition());
-            System.out.println(pe);
         } catch (IOException e) {
             e.printStackTrace();
         }
