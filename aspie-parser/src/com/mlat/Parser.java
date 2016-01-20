@@ -43,9 +43,10 @@ public class Parser {
         BufferedWriter writer = null;
         try {
             for (int i=0; i < solrDocumentList.size(); ++i) {
+                String filename = "thread" + i + ".txt";
                 String url = (solrDocumentList.get(i).getFieldValue("url").toString()).replace("[", "").replace("]","");
                 if (!url.endsWith("index.rss")) {
-                    String title = (solrDocumentList.get(i).getFieldValue("title").toString()).replace("[", "").replace("]","");
+                    String title = (solrDocumentList.get(i).getFieldValue("title").toString()).replace("[", "").replace("]","").replace("| AspiesCentral.com", "");
                     String content = (solrDocumentList.get(i).getFieldValue("content").toString()).replace(HTMLSTRING, "");
                     // Replacing all non-alpha characters with empty strings
                     String filteredContent = content.replaceAll("[^A-Za-z ]", "");
@@ -53,10 +54,9 @@ public class Parser {
                     String textStr[] = filteredContent.split("\\s+");
                     System.out.println("Title: " + title);
                     System.out.println("URL: " + url);
-                    writer = new BufferedWriter(new FileWriter("output/thread" + i + ".txt"));
+                    writer = new BufferedWriter(new FileWriter("output/" + filename, false));
                     writer.write("Title: " + title + "\n");
                     writer.write("URL: " + url + "\n");
-
                     for (int j = 0; j < textStr.length; ++j) {
                         // Don't include string that has length 1
                         // Don't include string that are stop words
@@ -64,13 +64,13 @@ public class Parser {
                             writer.write(textStr[j] + "\n");
                         }
                     }
-                    System.out.println("Successfully wrote to file >" + "thread" + i + ".txt");
-                    System.out.println("----------------------------------------");
+                    System.out.println("Successfully wrote to file >> " + filename);
+                    System.out.println("--------------------------------------------------------------------------------");
                     writer.close();
                 } else {
                     // avoid duplicate threads
                     System.out.println("Skipping " + url + "....");
-                    System.out.println("----------------------------------------");
+                    System.out.println("--------------------------------------------------------------------------------");
                 }
             }
         } catch (IOException e) {
