@@ -19,7 +19,7 @@ public class SolrManager {
         query.setQuery("*:*");
         query.setFields("title", "url", "content");
         query.setStart(0);
-        query.setRows(1000);
+        query.setRows(14763);
         QueryResponse response = solr.query(query);
         SolrDocumentList results = response.getResults();
         return results;
