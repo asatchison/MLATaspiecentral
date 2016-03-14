@@ -674,10 +674,6 @@ twitter
 tumblr
 reddit
 email
-<<<<<<< HEAD
-httpswwwtwittercomaspiescentral
-aspiescentralcom
-=======
 aspiescentralcom
 httpswwwtwittercomaspiescentral
 user
@@ -695,4 +691,3 @@ aspies
 central
 discussions
 general
->>>>>>> 7c8487cf88930cf00ec9aed9ecca36567076d097
