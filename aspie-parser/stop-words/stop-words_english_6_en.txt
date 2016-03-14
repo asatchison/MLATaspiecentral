@@ -674,6 +674,5 @@ twitter
 tumblr
 reddit
 email
-AspiesCentralcom
-AspiesCentralcom
 httpswwwtwittercomaspiescentral
+aspiescentralcom
