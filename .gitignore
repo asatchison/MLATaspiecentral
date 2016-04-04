@@ -69,4 +69,5 @@ fabric.properties
 hs_err_pid*
 
 out/production/aspie-parser
+.DS_Store
 
