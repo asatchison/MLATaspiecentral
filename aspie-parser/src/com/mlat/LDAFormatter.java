@@ -73,9 +73,9 @@ public class LDAFormatter {
 
     }
 
-    public static void main(String[] args) {
-        generateWordMapFromDirectory();
-        writeVocabsToFile();
-    }
+//    public static void main(String[] args) {
+//        generateWordMapFromDirectory();
+//        writeVocabsToFile();
+//    }
 }
 

@@ -82,9 +82,9 @@ public class MatLabTextFormatter {
 
     }
 
-    public static void main(String[] args) {
-        HashMap<String, Integer> map = generateWordMapFromDirectory();
-        writeMapToFile(map);
-    }
+//    public static void main(String[] args) {
+//        HashMap<String, Integer> map = generateWordMapFromDirectory();
+//        writeMapToFile(map);
+//    }
 }
 
