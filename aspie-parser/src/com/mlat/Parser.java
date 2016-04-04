@@ -177,7 +177,7 @@ public class Parser {
         }
     }
 
-    public static void main(String[] args) {
-        printMostCommonWords(100);
-    }
+//    public static void main(String[] args) {
+//        printMostCommonWords(100);
+//    }
 }

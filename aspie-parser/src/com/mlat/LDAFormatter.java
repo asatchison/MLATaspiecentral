@@ -15,7 +15,6 @@ public class LDAFormatter {
         BufferedWriter bw = null;
         try {
             bw = new BufferedWriter(new FileWriter("./data/reuters.ldac"));
-//            File threadsFolder = new File("/Users/yokoy/Desktop/threads");
             File threadsFolder = new File("/Volumes/YOKO/MLAT/MLATaspiecentral/aspie-parser/output");
             for (final File fileEntry : threadsFolder.listFiles()) {
                 // ignore .DS_Store
@@ -73,9 +72,9 @@ public class LDAFormatter {
 
     }
 
-//    public static void main(String[] args) {
-//        generateWordMapFromDirectory();
-//        writeVocabsToFile();
-//    }
+    public static void main(String[] args) {
+        generateWordMapFromDirectory();
+        writeVocabsToFile();
+    }
 }
 
